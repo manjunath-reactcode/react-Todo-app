@@ -6,12 +6,15 @@ import TodoFilter from "./components/TodoFilter";
 import AddTaskDrawer from "./components/AddTaskDrawer";
 import EmptyState from "./components/EmptyState";
 import TodoFooter from "./components/TodoFooter";
+import EditTaskDrawer from "./components/EditTaskDrawer";
 
 const App = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState("all");
   const [description, setDescription] = useState("");
+
+  const [editingTask, setEditingTask] = useState(null); 
 
   const filteredTasks =
     filter === "all" ? tasks : tasks.filter((task) => task.status === filter);
@@ -48,6 +51,21 @@ const App = () => {
     );
   };
 
+  const handleEditTask = (id) => {
+    const task = tasks.find((t) => t.id === id);
+    if (task) {
+      setEditingTask(task); 
+    }
+  };
+
+  const handleSaveEdit = (id, newDescription) => {
+    setTasks((prev) =>
+      prev.map((task) =>
+        task.id === id ? { ...task, title: newDescription } : task
+      )
+    );
+  };
+
   return (
     <Box
       sx={{
@@ -66,7 +84,13 @@ const App = () => {
           p: 2,
         }}
       >
-        <TodoHeader onAddClick={() => setDrawerOpen(true)} />
+        <TodoHeader
+          onAddClick={() => {
+            setEditingTask(null); 
+            setDescription("");  
+            setDrawerOpen(true);
+          }}
+        />
 
         <Box sx={{ my: 4 }}>
           <TodoFilter tasks={filteredTasks} onFilterChange={setFilter} />
@@ -77,7 +101,7 @@ const App = () => {
             tasks={filteredTasks}
             onDelete={handleDeleteTask}
             onToggleStatus={handleToggleStatus}
-            onEdit={() => {}}
+            onEdit={handleEditTask}
           />
         ) : (
           <EmptyState />
@@ -85,12 +109,21 @@ const App = () => {
 
         <TodoFooter />
 
+        
         <AddTaskDrawer
           open={drawerOpen}
           onClose={() => setDrawerOpen(false)}
           description={description}
           setDescription={setDescription}
           onSave={handleAddTask}
+        />
+
+      
+        <EditTaskDrawer
+          open={Boolean(editingTask)}
+          editingTask={editingTask}
+          onClose={() => setEditingTask(null)}
+          onSaveEdit={handleSaveEdit}
         />
       </Container>
     </Box>

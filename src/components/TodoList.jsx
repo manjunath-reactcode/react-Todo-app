@@ -37,7 +37,7 @@ const TodoList = ({ tasks, onDelete, onToggleStatus, onEdit }) =>
               sx={{
                 textDecoration:
                   task.status === "completed" ? "line-through" : "none",
-                color: task.status === "completed" ? "#9DA9B9" : "#12B1E3",
+                color: task.status === "completed" ? "#9DA9B9" : "#ffffff",
                 fontWeight: 500,
               }}
             >
